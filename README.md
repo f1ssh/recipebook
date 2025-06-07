@@ -8,6 +8,8 @@ This project contains a simple front‑end web application for keeping personal 
 
 - Create, view, update and delete recipes
 - List all saved recipes
+- Search recipes by name or ingredients
+- Filter recipes by comma-separated ingredients
 - Plan recipes for each day of the week
 
 ## Usage
