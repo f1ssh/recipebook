@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Recipe</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>View Recipe</h1>
+    <nav>
+        <a href="index.html">Back to Recipes</a>
+    </nav>
+    <div id="recipe-details"></div>
+
+    <script src="app.js"></script>
+    <script>
+        const id = new URLSearchParams(window.location.search).get('id');
+        const recipe = getRecipe(id);
+        if(recipe){
+            const container = document.getElementById('recipe-details');
+            container.innerHTML = `<h2>${recipe.name}</h2>
+                <h3>Ingredients</h3>
+                <pre>${recipe.ingredients}</pre>
+                <h3>Instructions</h3>
+                <pre>${recipe.instructions}</pre>`;
+        }
+    </script>
+</body>
+</html>
