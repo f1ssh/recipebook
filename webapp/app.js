@@ -35,9 +35,22 @@ function deleteRecipe(id){
     saveAllRecipes(recipes);
 }
 
-function listRecipes(){
+function listRecipes(search = '', ingredients = ''){
     const tbody = document.querySelector('#recipe-table tbody');
-    const recipes = getAllRecipes();
+    let recipes = getAllRecipes();
+    const query = search.toLowerCase();
+    if(query){
+        recipes = recipes.filter(r =>
+            r.name.toLowerCase().includes(query) ||
+            r.ingredients.toLowerCase().includes(query)
+        );
+    }
+    if(ingredients){
+        const req = ingredients.toLowerCase().split(',').map(s => s.trim()).filter(Boolean);
+        recipes = recipes.filter(r =>
+            req.every(word => r.ingredients.toLowerCase().includes(word))
+        );
+    }
     tbody.innerHTML = recipes.map(r =>
         `<tr><td>${r.name}</td>
         <td>

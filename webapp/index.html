@@ -14,6 +14,10 @@
             <a href="create.html">Create Recipe</a>
             <a href="mealplan.html">Meal Plan</a>
         </nav>
+        <div class="filters">
+            <input type="text" id="search" placeholder="Search recipes...">
+            <input type="text" id="ingredient-filter" placeholder="Filter by ingredients (comma-separated)">
+        </div>
         <table id="recipe-table">
             <thead>
                 <tr><th>Name</th><th>Actions</th></tr>
@@ -25,6 +29,15 @@
 
     <script src="app.js"></script>
     <script>
+        const searchInput = document.getElementById('search');
+        const ingredientInput = document.getElementById('ingredient-filter');
+        function refresh(){
+            const query = searchInput.value.trim();
+            const ingredients = ingredientInput.value.trim();
+            listRecipes(query, ingredients);
+        }
+        searchInput.addEventListener('input', refresh);
+        ingredientInput.addEventListener('input', refresh);
         listRecipes();
     </script>
 </body>
