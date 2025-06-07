@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Recipe</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Create Recipe</h1>
+    <nav>
+        <a href="index.html">Back to Recipes</a>
+    </nav>
+    <form id="recipe-form">
+        <label>Name:<br><input type="text" id="name" required></label><br>
+        <label>Ingredients:<br><textarea id="ingredients" required></textarea></label><br>
+        <label>Instructions:<br><textarea id="instructions" required></textarea></label><br>
+        <button type="submit">Save</button>
+    </form>
+
+    <script src="app.js"></script>
+    <script>
+        document.getElementById('recipe-form').addEventListener('submit', function(e){
+            e.preventDefault();
+            createRecipe({
+                name: document.getElementById('name').value,
+                ingredients: document.getElementById('ingredients').value,
+                instructions: document.getElementById('instructions').value
+            });
+            window.location.href = 'index.html';
+        });
+    </script>
+</body>
+</html>

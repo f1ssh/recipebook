@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weekly Meal Plan</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Weekly Meal Plan</h1>
+    <nav>
+        <a href="index.html">Back to Recipes</a>
+    </nav>
+    <table id="meal-plan">
+        <thead>
+            <tr><th>Day</th><th>Recipe</th></tr>
+        </thead>
+        <tbody>
+            <tr><td>Monday</td><td><select data-day="mon"></select></td></tr>
+            <tr><td>Tuesday</td><td><select data-day="tue"></select></td></tr>
+            <tr><td>Wednesday</td><td><select data-day="wed"></select></td></tr>
+            <tr><td>Thursday</td><td><select data-day="thu"></select></td></tr>
+            <tr><td>Friday</td><td><select data-day="fri"></select></td></tr>
+            <tr><td>Saturday</td><td><select data-day="sat"></select></td></tr>
+            <tr><td>Sunday</td><td><select data-day="sun"></select></td></tr>
+        </tbody>
+    </table>
+    <button id="save-plan">Save Plan</button>
+
+    <script src="app.js"></script>
+    <script>
+        const selects = document.querySelectorAll('select');
+        const recipes = getAllRecipes();
+        selects.forEach(sel => {
+            sel.innerHTML = '<option value="">-- none --</option>' + recipes.map(r => `<option value="${r.id}">${r.name}</option>`).join('');
+        });
+        loadMealPlan();
+        document.getElementById('save-plan').onclick = function(){
+            const plan = {};
+            selects.forEach(sel => { plan[sel.dataset.day] = sel.value; });
+            localStorage.setItem('mealPlan', JSON.stringify(plan));
+            alert('Meal plan saved');
+        };
+        function loadMealPlan(){
+            const plan = JSON.parse(localStorage.getItem('mealPlan') || '{}');
+            selects.forEach(sel => { sel.value = plan[sel.dataset.day] || ''; });
+        }
+    </script>
+</body>
+</html>
