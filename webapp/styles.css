@@ -93,3 +93,22 @@ button:hover {
     gap: 10px;
     margin-bottom: 10px;
 }
+
+.fav, .favorite {
+    cursor: pointer;
+    font-size: 1.2em;
+}
+
+.recipe-photo {
+    max-width: 100%;
+    height: auto;
+    margin-bottom: 10px;
+}
+
+.have {
+    color: #999;
+}
+
+.step.done {
+    text-decoration: line-through;
+}

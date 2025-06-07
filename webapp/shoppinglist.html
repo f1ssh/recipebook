@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping List</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Shopping List</h1>
+        <nav>
+            <a href="index.html">Back to Recipes</a>
+            <a href="mealplan.html">Meal Plan</a>
+        </nav>
+        <ul id="shopping-list"></ul>
+        <button id="print">Print</button>
+    </div>
+
+    <script src="app.js"></script>
+    <script>
+        const plan = JSON.parse(localStorage.getItem('mealPlan') || '{}');
+        const list = document.getElementById('shopping-list');
+        const pantry = getPantry().map(i => i.name.toLowerCase());
+        let ingredients = [];
+        Object.values(plan).forEach(id => {
+            const r = getRecipe(id);
+            if(r){
+                ingredients = ingredients.concat(r.ingredients.split(/\n/));
+            }
+        });
+        const counts = {};
+        ingredients.forEach(line => {
+            const key = line.trim().toLowerCase();
+            if(!key) return;
+            if(!counts[key]) counts[key] = {text: line, qty: 0};
+            counts[key].qty++;
+        });
+        const items = Object.values(counts);
+        list.innerHTML = items.map(it => {
+            let text = it.text;
+            if(it.qty > 1) text += ` (x${it.qty})`;
+            const have = pantry.some(p => text.toLowerCase().includes(p));
+            return `<li><label><input type="checkbox"> <span ${have? 'class="have"':''}>${text}${have?' (on hand)':''}</span></label></li>`;
+        }).join('');
+        list.querySelectorAll('input').forEach(ch => {
+            ch.addEventListener('change', () => {
+                ch.nextElementSibling.style.textDecoration = ch.checked ? 'line-through' : '';
+            });
+        });
+        document.getElementById('print').onclick = () => window.print();
+    </script>
+</body>
+</html>

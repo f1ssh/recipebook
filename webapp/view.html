@@ -23,11 +23,86 @@
         const recipe = getRecipe(id);
         if(recipe){
             const container = document.getElementById('recipe-details');
-            container.innerHTML = `<h2>${recipe.name}</h2>
+            const photo = recipe.photo ? `<img src="${recipe.photo}" class="recipe-photo">` : '';
+            container.innerHTML = `${photo}
+                <h2>${recipe.name} <span id="fav" class="favorite">${recipe.favorite ? '★' : '☆'}</span></h2>
+                <p><strong>Category:</strong> ${recipe.category || ''}</p>
+                <p><strong>Servings:</strong> <input type="number" id="servings" value="${recipe.servings || 1}" min="1"></p>
                 <h3>Ingredients</h3>
-                <pre>${recipe.ingredients}</pre>
+                <ul id="ing-list"></ul>
                 <h3>Instructions</h3>
-                <pre>${recipe.instructions}</pre>`;
+                <ol id="steps"></ol>`;
+
+            // populate lists
+            const ingredients = recipe.ingredients.split(/\n/);
+            const ingList = document.getElementById('ing-list');
+            ingredients.forEach(line => {
+                const li = document.createElement('li');
+                li.innerHTML = `<label><input type="checkbox"> <span class="ing-text"></span></label>`;
+                li.querySelector('.ing-text').textContent = line;
+                li.querySelector('input').addEventListener('change', function(){
+                    li.querySelector('.ing-text').style.textDecoration = this.checked ? 'line-through' : '';
+                });
+                ingList.appendChild(li);
+            });
+
+            const steps = recipe.instructions.split(/\n/);
+            const stepList = document.getElementById('steps');
+            steps.forEach(step => {
+                const li = document.createElement('li');
+                li.textContent = step;
+                li.addEventListener('click', function(){
+                    li.classList.toggle('done');
+                });
+                stepList.appendChild(li);
+            });
+
+            document.getElementById('fav').onclick = function(){
+                recipe.favorite = !recipe.favorite;
+                toggleFavorite(recipe.id, recipe.favorite);
+                this.textContent = recipe.favorite ? '★' : '☆';
+            };
+
+            const baseServings = recipe.servings || 1;
+            const baseLines = ingredients.slice();
+            const servInput = document.getElementById('servings');
+            servInput.addEventListener('input', updateQuantities);
+            updateQuantities();
+
+            function updateQuantities(){
+                const factor = parseFloat(servInput.value)/baseServings;
+                document.querySelectorAll('#ing-list .ing-text').forEach((span, i) => {
+                    span.textContent = scaleLine(baseLines[i], factor);
+                });
+            }
+
+            function scaleLine(line, factor){
+                const m = line.match(/^(\d+[\d\/. ]*)\s+(.*)/);
+                if(!m) return line;
+                const qty = parseQuantity(m[1]);
+                if(isNaN(qty)) return line;
+                const newQty = formatQuantity(qty * factor);
+                return newQty + ' ' + m[2];
+            }
+
+            function parseQuantity(str){
+                let total = 0;
+                str.trim().split(/\s+/).forEach(part => {
+                    if(part.includes('/')){
+                        const [a,b] = part.split('/');
+                        total += parseFloat(a)/parseFloat(b);
+                    } else {
+                        total += parseFloat(part);
+                    }
+                });
+                return total;
+            }
+
+            function formatQuantity(num){
+                return (Math.round(num*100)/100).toString();
+            }
+        } else {
+            document.getElementById('recipe-details').textContent = 'Recipe not found';
         }
     </script>
 </body>

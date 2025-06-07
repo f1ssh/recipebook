@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pantry</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Pantry</h1>
+        <nav>
+            <a href="index.html">Back to Recipes</a>
+            <a href="shoppinglist.html">Shopping List</a>
+        </nav>
+        <form id="pantry-form">
+            <label>Item:<br><input type="text" id="item-name" required></label>
+            <label>Quantity:<br><input type="text" id="item-qty"></label>
+            <button type="submit">Add</button>
+        </form>
+        <ul id="pantry-list"></ul>
+    </div>
+
+    <script src="app.js"></script>
+    <script>
+        const list = document.getElementById('pantry-list');
+        function render(){
+            const items = getPantry();
+            list.innerHTML = items.map((it,idx) =>
+                `<li>${it.name}${it.qty? ' - '+it.qty:''} <button data-idx="${idx}">Remove</button></li>`
+            ).join('');
+            list.querySelectorAll('button').forEach(btn => {
+                btn.onclick = () => { const items = getPantry(); items.splice(btn.dataset.idx,1); savePantry(items); render(); };
+            });
+        }
+        render();
+        document.getElementById('pantry-form').addEventListener('submit', e => {
+            e.preventDefault();
+            const items = getPantry();
+            items.push({name: document.getElementById('item-name').value, qty: document.getElementById('item-qty').value});
+            savePantry(items);
+            e.target.reset();
+            render();
+        });
+    </script>
+</body>
+</html>

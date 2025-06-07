@@ -15,6 +15,9 @@
         </nav>
         <form id="recipe-form">
             <label>Name:<br><input type="text" id="name" required></label>
+            <label>Category:<br><input type="text" id="category"></label>
+            <label>Servings:<br><input type="number" id="servings" min="1" value="1"></label>
+            <label>Photo:<br><input type="file" id="photo" accept="image/*"></label>
             <label>Ingredients:<br><textarea id="ingredients" required></textarea></label>
             <label>Instructions:<br><textarea id="instructions" required></textarea></label>
             <button type="submit">Update</button>
@@ -28,17 +31,36 @@
         const recipe = getRecipe(id);
         if(recipe){
             document.getElementById('name').value = recipe.name;
+            document.getElementById('category').value = recipe.category || '';
+            document.getElementById('servings').value = recipe.servings || 1;
             document.getElementById('ingredients').value = recipe.ingredients;
             document.getElementById('instructions').value = recipe.instructions;
         }
         document.getElementById('recipe-form').addEventListener('submit', function(e){
             e.preventDefault();
-            updateRecipe(id, {
+            const fileInput = document.getElementById('photo');
+            const data = {
                 name: document.getElementById('name').value,
+                category: document.getElementById('category').value,
+                servings: parseInt(document.getElementById('servings').value) || 1,
                 ingredients: document.getElementById('ingredients').value,
-                instructions: document.getElementById('instructions').value
-            });
-            window.location.href = 'index.html';
+                instructions: document.getElementById('instructions').value,
+                photo: recipe.photo || ''
+            };
+            const save = () => {
+                updateRecipe(id, data);
+                window.location.href = 'index.html';
+            };
+            if(fileInput.files[0]){
+                const reader = new FileReader();
+                reader.onload = function(){
+                    data.photo = reader.result;
+                    save();
+                };
+                reader.readAsDataURL(fileInput.files[0]);
+            } else {
+                save();
+            }
         });
     </script>
 </body>

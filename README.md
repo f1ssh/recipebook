@@ -11,6 +11,14 @@ This project contains a simple front‑end web application for keeping personal 
 - Search recipes by name or ingredients
 - Filter recipes by comma-separated ingredients
 - Plan recipes for each day of the week
+- Organize recipes by category
+- Mark favorites and filter them
+- Manage a pantry of ingredients
+- Generate shopping lists from the meal plan
+- Import/export all data for backup
+- Interactive cooking mode with step tracking
+- Adjust servings to scale ingredient amounts
+- Attach photos to recipes
 
 ## Usage
 

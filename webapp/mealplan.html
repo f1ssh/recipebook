@@ -12,6 +12,7 @@
         <h1>Weekly Meal Plan</h1>
         <nav>
             <a href="index.html">Back to Recipes</a>
+            <a href="shoppinglist.html">Shopping List</a>
         </nav>
         <table id="meal-plan">
             <thead>
@@ -28,6 +29,7 @@
             </tbody>
         </table>
         <button id="save-plan">Save Plan</button>
+        <button id="open-list">Generate Shopping List</button>
     </div>
 
 
@@ -44,6 +46,9 @@
             selects.forEach(sel => { plan[sel.dataset.day] = sel.value; });
             localStorage.setItem('mealPlan', JSON.stringify(plan));
             alert('Meal plan saved');
+        };
+        document.getElementById('open-list').onclick = function(){
+            window.location.href = 'shoppinglist.html';
         };
         function loadMealPlan(){
             const plan = JSON.parse(localStorage.getItem('mealPlan') || '{}');

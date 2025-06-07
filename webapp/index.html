@@ -13,14 +13,19 @@
         <nav>
             <a href="create.html">Create Recipe</a>
             <a href="mealplan.html">Meal Plan</a>
+            <a href="shoppinglist.html">Shopping List</a>
+            <a href="pantry.html">Pantry</a>
+            <a href="backup.html">Backup</a>
         </nav>
         <div class="filters">
             <input type="text" id="search" placeholder="Search recipes...">
             <input type="text" id="ingredient-filter" placeholder="Filter by ingredients (comma-separated)">
+            <select id="category-filter"></select>
+            <label><input type="checkbox" id="fav-filter"> Favorites</label>
         </div>
         <table id="recipe-table">
             <thead>
-                <tr><th>Name</th><th>Actions</th></tr>
+                <tr><th>Fav</th><th>Name</th><th>Category</th><th>Actions</th></tr>
             </thead>
             <tbody></tbody>
         </table>
@@ -31,13 +36,27 @@
     <script>
         const searchInput = document.getElementById('search');
         const ingredientInput = document.getElementById('ingredient-filter');
+        const categorySelect = document.getElementById('category-filter');
+        const favCheckbox = document.getElementById('fav-filter');
+        function fillCategories(){
+            const opts = ['<option value="">All Categories</option>'];
+            getCategories().forEach(cat => {
+                opts.push(`<option value="${cat}">${cat}</option>`);
+            });
+            categorySelect.innerHTML = opts.join('');
+        }
+        fillCategories();
         function refresh(){
             const query = searchInput.value.trim();
             const ingredients = ingredientInput.value.trim();
-            listRecipes(query, ingredients);
+            const cat = categorySelect.value;
+            const favOnly = favCheckbox.checked;
+            listRecipes(query, ingredients, cat, favOnly);
         }
         searchInput.addEventListener('input', refresh);
         ingredientInput.addEventListener('input', refresh);
+        categorySelect.addEventListener('change', refresh);
+        favCheckbox.addEventListener('change', refresh);
         listRecipes();
     </script>
 </body>
