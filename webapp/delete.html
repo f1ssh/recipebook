@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delete Recipe</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Delete Recipe</h1>
+        <nav>
+            <a href="index.html">Back to Recipes</a>
+        </nav>
+        <div id="confirmation"></div>
+    </div>
+
+    <script src="app.js"></script>
+    <script>
+        const id = new URLSearchParams(window.location.search).get('id');
+        const recipe = getRecipe(id);
+        const container = document.getElementById('confirmation');
+        if(recipe){
+            container.innerHTML = `<p>Are you sure you want to delete <strong>${recipe.name}</strong>?</p>
+            <button id="yes">Yes</button> <button id="no">No</button>`;
+            document.getElementById('yes').onclick = function(){
+                deleteRecipe(id);
+                window.location.href = 'index.html';
+            };
+            document.getElementById('no').onclick = function(){
+                window.location.href = 'index.html';
+            };
+        }
+    </script>
+</body>
+</html>

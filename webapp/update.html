@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Recipe</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Update Recipe</h1>
+        <nav>
+            <a href="index.html">Back to Recipes</a>
+        </nav>
+        <form id="recipe-form">
+            <label>Name:<br><input type="text" id="name" required></label>
+            <label>Ingredients:<br><textarea id="ingredients" required></textarea></label>
+            <label>Instructions:<br><textarea id="instructions" required></textarea></label>
+            <button type="submit">Update</button>
+        </form>
+    </div>
+
+    <script src="app.js"></script>
+    <script>
+        const id = new URLSearchParams(window.location.search).get('id');
+        const recipe = getRecipe(id);
+        if(recipe){
+            document.getElementById('name').value = recipe.name;
+            document.getElementById('ingredients').value = recipe.ingredients;
+            document.getElementById('instructions').value = recipe.instructions;
+        }
+        document.getElementById('recipe-form').addEventListener('submit', function(e){
+            e.preventDefault();
+            updateRecipe(id, {
+                name: document.getElementById('name').value,
+                ingredients: document.getElementById('ingredients').value,
+                instructions: document.getElementById('instructions').value
+            });
+            window.location.href = 'index.html';
+        });
+    </script>
+</body>
+</html>
