@@ -1,6 +1,8 @@
 # Recipe Book Webapp
 
+
 This project contains a simple front‑end web application for keeping personal recipes and planning meals. There is no backend server, so data is stored in the browser's `localStorage`. The interface uses a modern look and feel with responsive styling.
+
 
 ## Features
 
