@@ -74,13 +74,14 @@ function listRecipes(search = '', ingredients = '', category = '', favOnly = fal
     }
     tbody.innerHTML = recipes.map(r =>
         `<tr>
-            <td><span class="fav" data-id="${r.id}">${r.favorite ? '★' : '☆'}</span></td>
+            <td><span class="fav${r.favorite ? ' filled' : ''}" data-id="${r.id}">${r.favorite ? '★' : '☆'}</span></td>
+            <td>${r.photo ? `<img src="${r.photo}" class="thumb">` : ''}</td>
             <td>${r.name}</td>
             <td>${r.category || ''}</td>
             <td>
-                <a href="view.html?id=${r.id}">View</a> |
-                <a href="update.html?id=${r.id}">Edit</a> |
-                <a href="delete.html?id=${r.id}">Delete</a>
+                <a href="view.html?id=${r.id}" class="action"><i class="fas fa-eye"></i></a>
+                <a href="update.html?id=${r.id}" class="action"><i class="fas fa-pen"></i></a>
+                <a href="delete.html?id=${r.id}" class="action"><i class="fas fa-trash"></i></a>
             </td>
         </tr>`
     ).join('');
@@ -89,6 +90,7 @@ function listRecipes(search = '', ingredients = '', category = '', favOnly = fal
             const id = this.dataset.id;
             const fav = this.textContent === '☆';
             this.textContent = fav ? '★' : '☆';
+            this.classList.toggle('filled', fav);
             toggleFavorite(id, fav);
         });
     });

@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>View Recipe</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -25,7 +29,7 @@
             const container = document.getElementById('recipe-details');
             const photo = recipe.photo ? `<img src="${recipe.photo}" class="recipe-photo">` : '';
             container.innerHTML = `${photo}
-                <h2>${recipe.name} <span id="fav" class="favorite">${recipe.favorite ? '★' : '☆'}</span></h2>
+                <h2>${recipe.name} <span id="fav" class="favorite${recipe.favorite ? ' filled' : ''}">${recipe.favorite ? '★' : '☆'}</span></h2>
                 <p><strong>Category:</strong> ${recipe.category || ''}</p>
                 <p><strong>Servings:</strong> <input type="number" id="servings" value="${recipe.servings || 1}" min="1"></p>
                 <h3>Ingredients</h3>
@@ -61,6 +65,7 @@
                 recipe.favorite = !recipe.favorite;
                 toggleFavorite(recipe.id, recipe.favorite);
                 this.textContent = recipe.favorite ? '★' : '☆';
+                this.classList.toggle('filled', recipe.favorite);
             };
 
             const baseServings = recipe.servings || 1;
