@@ -10,6 +10,7 @@ body {
     margin: 0;
     background: var(--background);
     color: var(--text-color);
+    padding-top: 60px;
 }
 
 .container {
@@ -45,6 +46,51 @@ nav a {
 nav a:hover {
     background: #c8e6c9;
     transform: translateY(-2px);
+}
+
+#navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--background);
+    box-shadow: 8px 8px 15px rgba(0,0,0,0.15), -8px -8px 15px rgba(255,255,255,0.8);
+    z-index: 1000;
+}
+
+#navbar .title {
+    font-weight: bold;
+    margin-right: auto;
+    text-decoration: none;
+    color: var(--text-color);
+    padding: 6px 12px;
+    border-radius: 20px;
+    background: var(--background);
+    box-shadow: 2px 2px 5px rgba(0,0,0,0.2), -2px -2px 5px rgba(255,255,255,0.8);
+    transition: transform 0.2s ease;
+}
+
+#navbar nav a {
+    text-decoration: none;
+    color: var(--text-color);
+    padding: 6px 12px;
+    border-radius: 20px;
+    background: var(--background);
+    box-shadow: 2px 2px 5px rgba(0,0,0,0.2), -2px -2px 5px rgba(255,255,255,0.8);
+    transition: transform 0.2s ease;
+}
+
+#navbar nav a:hover, #navbar .title:hover {
+    transform: translateY(-2px);
+}
+
+#navbar nav a.active {
+    background: var(--primary-color);
+    color: #fff;
 }
 
 table {
@@ -161,4 +207,73 @@ button:hover {
 
 .step.done {
     text-decoration: line-through;
+}
+
+/* Calendar UI */
+#calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+}
+
+.weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    margin-top: 10px;
+    margin-bottom: 6px;
+    text-align: center;
+    font-weight: bold;
+}
+
+#calendar-grid .day, #calendar-grid .empty {
+    min-height: 100px;
+    padding: 4px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background: var(--background);
+    position: relative;
+}
+
+#calendar-grid .day:hover {
+    background: #e8f5e9;
+    cursor: pointer;
+}
+
+.day-num {
+    font-weight: bold;
+    margin-bottom: 2px;
+}
+
+.popover {
+    position: absolute;
+    inset: 0;
+    background: var(--background);
+    border-radius: 8px;
+    padding: 4px;
+    box-shadow: inset 2px 2px 5px rgba(0,0,0,0.2), inset -2px -2px 5px rgba(255,255,255,0.8);
+    z-index: 10;
+}
+
+.popover ul {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 4px 0;
+}
+
+.popover li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.popover input {
+    width: calc(100% - 30px);
+}
+
+.month-nav {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 6px;
 }

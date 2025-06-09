@@ -11,27 +11,33 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <header id="navbar">
+        <a href="index.html" class="title">Meal Planner</a>
+        <nav>
+            <a href="recipes.html">Recipes</a>
+            <a href="index.html">Meal Plan</a>
+            <a href="shopping.html">Shopping List</a>
+            <a href="pantry.html">Pantry</a>
+            <a href="backup.html">Backup</a>
+        </nav>
+    </header>
     <div class="container">
         <h1>Shopping List</h1>
-        <nav>
-            <a href="index.html">Back to Recipes</a>
-            <a href="mealplan.html">Meal Plan</a>
-        </nav>
         <ul id="shopping-list"></ul>
         <button id="print">Print</button>
     </div>
 
     <script src="app.js"></script>
     <script>
-        const plan = JSON.parse(localStorage.getItem('mealPlan') || '{}');
+        const plan = getMealPlan();
         const list = document.getElementById('shopping-list');
         const pantry = getPantry().map(i => i.name.toLowerCase());
         let ingredients = [];
-        Object.values(plan).forEach(id => {
-            const r = getRecipe(id);
-            if(r){
-                ingredients = ingredients.concat(r.ingredients.split(/\n/));
-            }
+        Object.values(plan).forEach(arr => {
+            (arr||[]).forEach(id => {
+                const r = getRecipe(id);
+                if(r) ingredients = ingredients.concat(r.ingredients.split(/\n/));
+            });
         });
         const counts = {};
         ingredients.forEach(line => {
@@ -53,6 +59,7 @@
             });
         });
         document.getElementById('print').onclick = () => window.print();
+        document.querySelectorAll('#navbar nav a').forEach(a=>{if(a.getAttribute('href')===location.pathname.split('/').pop())a.classList.add('active');});
     </script>
 </body>
 </html>
