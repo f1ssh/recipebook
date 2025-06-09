@@ -7,21 +7,22 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <header id="navbar">
-        <a href="index.html" class="title">Meal Planner</a>
-        <nav>
-            <a href="recipes.html">Recipes</a>
-            <a href="index.html">Meal Plan</a>
-            <a href="shopping.html">Shopping List</a>
-            <a href="pantry.html">Pantry</a>
-            <a href="backup.html">Backup</a>
+        <a id="brand" href="index.html">Meal Planner</a>
+        <nav class="nav-links">
+            <a class="nav-link" href="recipes.html">Recipes</a>
+            <a class="nav-link" href="index.html">Meal Plan</a>
+            <a class="nav-link" href="shopping.html">Shopping List</a>
+            <a class="nav-link" href="pantry.html">Pantry</a>
+            <a class="nav-link" href="backup.html">Backup</a>
         </nav>
     </header>
-    <div class="container">
+    <div id="calendar-page" class="container">
         <h1 id="cal-title"></h1>
         <div class="month-nav">
             <button id="prev-month">&#8249;</button>
@@ -31,92 +32,10 @@
         <div class="weekdays"></div>
         <div id="calendar-grid"></div>
     </div>
-    <datalist id="recipes-list"></datalist>
+    <div id="recipe-modal" class="modal hidden" tabindex="-1" aria-hidden="true"></div>
     <script src="app.js"></script>
+    <script src="mealplan.js"></script>
     <script>
-        const recipes = getAllRecipes();
-        const recipeMap = Object.fromEntries(recipes.map(r => [r.id, r.name]));
-        const datalist = document.getElementById('recipes-list');
-        datalist.innerHTML = recipes.map(r => `<option value="${r.name}"></option>`).join('');
-        let current = new Date();
-        current.setDate(1);
-
-        function renderWeekdays() {
-            const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-            document.querySelector('.weekdays').innerHTML = days.map(d => `<div>${d}</div>`).join('');
-        }
-
-        function renderCalendar(){
-            document.getElementById('cal-title').textContent = current.toLocaleString('default', {month:'long', year:'numeric'});
-            const grid = document.getElementById('calendar-grid');
-            grid.innerHTML = '';
-            const startDay = new Date(current.getFullYear(), current.getMonth(), 1).getDay();
-            for(let i=0;i<startDay;i++) grid.appendChild(document.createElement('div'));
-            const daysInMonth = new Date(current.getFullYear(), current.getMonth()+1, 0).getDate();
-            const plan = getMealPlan();
-            for(let d=1; d<=daysInMonth; d++){
-                const date = new Date(current.getFullYear(), current.getMonth(), d);
-                const iso = date.toISOString().split('T')[0];
-                const cell = document.createElement('div');
-                cell.className = 'day';
-                cell.dataset.date = iso;
-                cell.innerHTML = `<div class='day-num'>${d}</div>`;
-                const list = document.createElement('ul');
-                list.className='meal-list';
-                (plan[iso]||[]).forEach(id=>{
-                    const li=document.createElement('li');
-                    li.textContent=recipeMap[id]||'Unknown';
-                    list.appendChild(li);
-                });
-                cell.appendChild(list);
-                cell.addEventListener('click',ev=>{ev.stopPropagation();openPopover(cell,iso);});
-                grid.appendChild(cell);
-            }
-            const remainder = (7 - grid.children.length % 7) %7;
-            for(let i=0;i<remainder;i++) grid.appendChild(document.createElement('div'));
-        }
-
-        let currentPopover = null;
-        function openPopover(cell, iso){
-            closePopover();
-            const plan = getMealPlan();
-            const meals = plan[iso] ? [...plan[iso]] : [];
-            const pop = document.createElement('div');
-            pop.className = 'popover';
-            const list = document.createElement('ul');
-            meals.forEach((id,idx)=>{
-                const li=document.createElement('li');
-                li.innerHTML=`${recipeMap[id]||'Unknown'} <button data-i='${idx}'>🗑️</button>`;
-                li.querySelector('button').onclick=()=>{
-                    meals.splice(idx,1); plan[iso]=meals; saveMealPlan(plan); renderCalendar();
-                };
-                list.appendChild(li);
-            });
-            pop.appendChild(list);
-            const input=document.createElement('input');
-            input.setAttribute('list','recipes-list');
-            const addBtn=document.createElement('button');
-            addBtn.textContent='＋';
-            addBtn.onclick=()=>{
-                const name=input.value.trim();
-                const recipe=recipes.find(r=>r.name===name);
-                if(recipe){
-                    meals.push(recipe.id);
-                    plan[iso]=meals; saveMealPlan(plan); renderCalendar();
-                }
-            };
-            pop.appendChild(input); pop.appendChild(addBtn);
-            cell.appendChild(pop); currentPopover=pop;
-        }
-        function closePopover(){ if(currentPopover){currentPopover.remove(); currentPopover=null;} }
-        document.addEventListener('click',closePopover);
-
-        document.getElementById('prev-month').onclick=()=>{current.setMonth(current.getMonth()-1);renderCalendar();};
-        document.getElementById('next-month').onclick=()=>{current.setMonth(current.getMonth()+1);renderCalendar();};
-        document.getElementById('today-btn').onclick=()=>{current=new Date();current.setDate(1);renderCalendar();};
-
-        renderWeekdays();
-        renderCalendar();
         document.querySelectorAll('#navbar nav a').forEach(a=>{if(a.getAttribute('href')===location.pathname.split('/').pop())a.classList.add('active');});
     </script>
 </body>
