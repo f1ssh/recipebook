@@ -1,8 +1,10 @@
 
 :root {
     --primary-color: #62b56f;
+    --navbar-accent: var(--primary-color);
     --background: #f0f3f5;
     --text-color: #333;
+    --navbar-height: 60px;
 }
 
 body {
@@ -10,7 +12,7 @@ body {
     margin: 0;
     background: var(--background);
     color: var(--text-color);
-    padding-top: 60px;
+    padding-top: var(--navbar-height);
 }
 
 .container {
@@ -20,6 +22,14 @@ body {
     padding: 20px;
     border-radius: 12px;
     box-shadow: 8px 8px 15px rgba(0,0,0,0.15), -8px -8px 15px rgba(255,255,255,0.8);
+}
+
+#calendar-page.container {
+    max-width: none;
+    margin: 20px;
+    min-height: calc(100vh - var(--navbar-height));
+    display: flex;
+    flex-direction: column;
 }
 
 h1 {
@@ -53,28 +63,32 @@ nav a:hover {
     top: 0;
     left: 0;
     width: 100%;
-    padding: 10px 20px;
+    padding: 10px 1.5rem;
     display: flex;
     align-items: center;
     gap: 10px;
-    background: var(--background);
-    box-shadow: 8px 8px 15px rgba(0,0,0,0.15), -8px -8px 15px rgba(255,255,255,0.8);
+    background: var(--navbar-accent);
+    box-shadow: inset 2px 2px 4px rgba(0,0,0,0.2), inset -2px -2px 4px rgba(255,255,255,0.8);
     z-index: 1000;
 }
 
-#navbar .title {
-    font-weight: bold;
+#brand {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem;
+    font-weight: 700;
     margin-right: auto;
     text-decoration: none;
-    color: var(--text-color);
-    padding: 6px 12px;
-    border-radius: 20px;
-    background: var(--background);
-    box-shadow: 2px 2px 5px rgba(0,0,0,0.2), -2px -2px 5px rgba(255,255,255,0.8);
-    transition: transform 0.2s ease;
+    color: #fff;
+    cursor: pointer;
 }
 
-#navbar nav a {
+.nav-links {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+#navbar .nav-link {
     text-decoration: none;
     color: var(--text-color);
     padding: 6px 12px;
@@ -82,13 +96,17 @@ nav a:hover {
     background: var(--background);
     box-shadow: 2px 2px 5px rgba(0,0,0,0.2), -2px -2px 5px rgba(255,255,255,0.8);
     transition: transform 0.2s ease;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
-#navbar nav a:hover, #navbar .title:hover {
+#navbar .nav-link:hover, #brand:hover {
     transform: translateY(-2px);
 }
 
-#navbar nav a.active {
+#navbar .nav-link.active {
     background: var(--primary-color);
     color: #fff;
 }
@@ -213,7 +231,9 @@ button:hover {
 #calendar-grid {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
+    grid-auto-rows: 1fr;
     gap: 6px;
+    height: 100%;
 }
 
 .weekdays {
@@ -276,4 +296,94 @@ button:hover {
     align-items: center;
     gap: 10px;
     margin-bottom: 6px;
+}
+
+/* Modal Picker */
+.modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    z-index: 2000;
+}
+.modal.show {
+    opacity: 1;
+    pointer-events: auto;
+}
+.modal.hidden {
+    display: none;
+}
+.modal-content {
+    background: var(--background);
+    border-radius: 12px;
+    padding: 1rem;
+    width: 90%;
+    max-width: 600px;
+    max-height: calc(100vh - 4rem);
+    box-shadow: 8px 8px 15px rgba(0,0,0,0.15), -8px -8px 15px rgba(255,255,255,0.8);
+    display: flex;
+    flex-direction: column;
+}
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+.modal-close {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+.filter-bar {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 0.5rem;
+}
+.recipe-list {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.recipe-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px;
+    border-radius: 8px;
+    background: var(--background);
+    box-shadow: inset 2px 2px 5px rgba(0,0,0,0.1), inset -2px -2px 5px rgba(255,255,255,0.7);
+}
+.recipe-item img {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 6px;
+}
+.recipe-item .name {
+    flex: 1;
+}
+.scheduled {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-bottom: 0.5rem;
+}
+.sched-chip {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 6px;
+    border-radius: 12px;
+    background: var(--background);
+    box-shadow: inset 2px 2px 4px rgba(0,0,0,0.1), inset -2px -2px 4px rgba(255,255,255,0.7);
 }
