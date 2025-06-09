@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipe Book - Recipes</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header id="navbar">
+        <a href="index.html" class="title">Meal Planner</a>
+        <nav>
+            <a href="recipes.html">Recipes</a>
+            <a href="index.html">Meal Plan</a>
+            <a href="shopping.html">Shopping List</a>
+            <a href="pantry.html">Pantry</a>
+            <a href="backup.html">Backup</a>
+        </nav>
+    </header>
+
+    <div class="container">
+        <h1>Recipe List</h1>
+        <nav class="page-nav">
+            <a href="create.html">Create Recipe</a>
+        </nav>
+        <div class="filters">
+            <input type="text" id="search" placeholder="Search recipes...">
+            <input type="text" id="ingredient-filter" placeholder="Filter by ingredients (comma-separated)">
+            <select id="category-filter"></select>
+            <label><input type="checkbox" id="fav-filter"> Favorites</label>
+        </div>
+        <table id="recipe-table">
+            <thead>
+                <tr><th>Fav</th><th>Photo</th><th>Name</th><th>Category</th><th>Actions</th></tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+
+    <script src="app.js"></script>
+    <script>
+        const searchInput = document.getElementById('search');
+        const ingredientInput = document.getElementById('ingredient-filter');
+        const categorySelect = document.getElementById('category-filter');
+        const favCheckbox = document.getElementById('fav-filter');
+        function fillCategories(){
+            const opts = ['<option value="">All Categories</option>'];
+            getCategories().forEach(cat => {
+                opts.push(`<option value="${cat}">${cat}</option>`);
+            });
+            categorySelect.innerHTML = opts.join('');
+        }
+        fillCategories();
+        function refresh(){
+            const query = searchInput.value.trim();
+            const ingredients = ingredientInput.value.trim();
+            const cat = categorySelect.value;
+            const favOnly = favCheckbox.checked;
+            listRecipes(query, ingredients, cat, favOnly);
+        }
+        searchInput.addEventListener('input', refresh);
+        ingredientInput.addEventListener('input', refresh);
+        categorySelect.addEventListener('change', refresh);
+        favCheckbox.addEventListener('change', refresh);
+        listRecipes();
+        document.querySelectorAll('#navbar nav a').forEach(a=>{if(a.getAttribute('href')===location.pathname.split('/').pop())a.classList.add('active');});
+    </script>
+</body>
+</html>

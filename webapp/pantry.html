@@ -11,12 +11,18 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <header id="navbar">
+        <a href="index.html" class="title">Meal Planner</a>
+        <nav>
+            <a href="recipes.html">Recipes</a>
+            <a href="index.html">Meal Plan</a>
+            <a href="shopping.html">Shopping List</a>
+            <a href="pantry.html">Pantry</a>
+            <a href="backup.html">Backup</a>
+        </nav>
+    </header>
     <div class="container">
         <h1>Pantry</h1>
-        <nav>
-            <a href="index.html">Back to Recipes</a>
-            <a href="shoppinglist.html">Shopping List</a>
-        </nav>
         <form id="pantry-form">
             <label>Item:<br><input type="text" id="item-name" required></label>
             <label>Quantity:<br><input type="text" id="item-qty"></label>
@@ -46,6 +52,7 @@
             e.target.reset();
             render();
         });
+        document.querySelectorAll('#navbar nav a').forEach(a=>{if(a.getAttribute('href')===location.pathname.split('/').pop())a.classList.add('active');});
     </script>
 </body>
 </html>

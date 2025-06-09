@@ -11,12 +11,19 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <header id="navbar">
+        <a href="index.html" class="title">Meal Planner</a>
+        <nav>
+            <a href="recipes.html">Recipes</a>
+            <a href="index.html">Meal Plan</a>
+            <a href="shopping.html">Shopping List</a>
+            <a href="pantry.html">Pantry</a>
+            <a href="backup.html">Backup</a>
+        </nav>
+    </header>
 
     <div class="container">
         <h1>Update Recipe</h1>
-        <nav>
-            <a href="index.html">Back to Recipes</a>
-        </nav>
         <form id="recipe-form">
             <label>Name:<br><input type="text" id="name" required></label>
             <label>Category:<br><input type="text" id="category"></label>
@@ -53,7 +60,7 @@
             };
             const save = () => {
                 updateRecipe(id, data);
-                window.location.href = 'index.html';
+                window.location.href = 'recipes.html';
             };
             if(fileInput.files[0]){
                 const reader = new FileReader();
@@ -66,6 +73,7 @@
                 save();
             }
         });
+        document.querySelectorAll('#navbar nav a').forEach(a=>{if(a.getAttribute('href')===location.pathname.split('/').pop())a.classList.add('active');});
     </script>
 </body>
 </html>

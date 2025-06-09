@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Recipe Book - Recipes</title>
+    <title>Meal Planner</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap" rel="stylesheet">
@@ -11,57 +11,113 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-
-    <div class="container">
-        <h1>Recipe List</h1>
+    <header id="navbar">
+        <a href="index.html" class="title">Meal Planner</a>
         <nav>
-            <a href="create.html">Create Recipe</a>
-            <a href="mealplan.html">Meal Plan</a>
-            <a href="shoppinglist.html">Shopping List</a>
+            <a href="recipes.html">Recipes</a>
+            <a href="index.html">Meal Plan</a>
+            <a href="shopping.html">Shopping List</a>
             <a href="pantry.html">Pantry</a>
             <a href="backup.html">Backup</a>
         </nav>
-        <div class="filters">
-            <input type="text" id="search" placeholder="Search recipes...">
-            <input type="text" id="ingredient-filter" placeholder="Filter by ingredients (comma-separated)">
-            <select id="category-filter"></select>
-            <label><input type="checkbox" id="fav-filter"> Favorites</label>
+    </header>
+    <div class="container">
+        <h1 id="cal-title"></h1>
+        <div class="month-nav">
+            <button id="prev-month">&#8249;</button>
+            <button id="today-btn">Today</button>
+            <button id="next-month">&#8250;</button>
         </div>
-        <table id="recipe-table">
-            <thead>
-                <tr><th>Fav</th><th>Photo</th><th>Name</th><th>Category</th><th>Actions</th></tr>
-            </thead>
-            <tbody></tbody>
-        </table>
+        <div class="weekdays"></div>
+        <div id="calendar-grid"></div>
     </div>
-
-
+    <datalist id="recipes-list"></datalist>
     <script src="app.js"></script>
     <script>
-        const searchInput = document.getElementById('search');
-        const ingredientInput = document.getElementById('ingredient-filter');
-        const categorySelect = document.getElementById('category-filter');
-        const favCheckbox = document.getElementById('fav-filter');
-        function fillCategories(){
-            const opts = ['<option value="">All Categories</option>'];
-            getCategories().forEach(cat => {
-                opts.push(`<option value="${cat}">${cat}</option>`);
+        const recipes = getAllRecipes();
+        const recipeMap = Object.fromEntries(recipes.map(r => [r.id, r.name]));
+        const datalist = document.getElementById('recipes-list');
+        datalist.innerHTML = recipes.map(r => `<option value="${r.name}"></option>`).join('');
+        let current = new Date();
+        current.setDate(1);
+
+        function renderWeekdays() {
+            const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+            document.querySelector('.weekdays').innerHTML = days.map(d => `<div>${d}</div>`).join('');
+        }
+
+        function renderCalendar(){
+            document.getElementById('cal-title').textContent = current.toLocaleString('default', {month:'long', year:'numeric'});
+            const grid = document.getElementById('calendar-grid');
+            grid.innerHTML = '';
+            const startDay = new Date(current.getFullYear(), current.getMonth(), 1).getDay();
+            for(let i=0;i<startDay;i++) grid.appendChild(document.createElement('div'));
+            const daysInMonth = new Date(current.getFullYear(), current.getMonth()+1, 0).getDate();
+            const plan = getMealPlan();
+            for(let d=1; d<=daysInMonth; d++){
+                const date = new Date(current.getFullYear(), current.getMonth(), d);
+                const iso = date.toISOString().split('T')[0];
+                const cell = document.createElement('div');
+                cell.className = 'day';
+                cell.dataset.date = iso;
+                cell.innerHTML = `<div class='day-num'>${d}</div>`;
+                const list = document.createElement('ul');
+                list.className='meal-list';
+                (plan[iso]||[]).forEach(id=>{
+                    const li=document.createElement('li');
+                    li.textContent=recipeMap[id]||'Unknown';
+                    list.appendChild(li);
+                });
+                cell.appendChild(list);
+                cell.addEventListener('click',ev=>{ev.stopPropagation();openPopover(cell,iso);});
+                grid.appendChild(cell);
+            }
+            const remainder = (7 - grid.children.length % 7) %7;
+            for(let i=0;i<remainder;i++) grid.appendChild(document.createElement('div'));
+        }
+
+        let currentPopover = null;
+        function openPopover(cell, iso){
+            closePopover();
+            const plan = getMealPlan();
+            const meals = plan[iso] ? [...plan[iso]] : [];
+            const pop = document.createElement('div');
+            pop.className = 'popover';
+            const list = document.createElement('ul');
+            meals.forEach((id,idx)=>{
+                const li=document.createElement('li');
+                li.innerHTML=`${recipeMap[id]||'Unknown'} <button data-i='${idx}'>🗑️</button>`;
+                li.querySelector('button').onclick=()=>{
+                    meals.splice(idx,1); plan[iso]=meals; saveMealPlan(plan); renderCalendar();
+                };
+                list.appendChild(li);
             });
-            categorySelect.innerHTML = opts.join('');
+            pop.appendChild(list);
+            const input=document.createElement('input');
+            input.setAttribute('list','recipes-list');
+            const addBtn=document.createElement('button');
+            addBtn.textContent='＋';
+            addBtn.onclick=()=>{
+                const name=input.value.trim();
+                const recipe=recipes.find(r=>r.name===name);
+                if(recipe){
+                    meals.push(recipe.id);
+                    plan[iso]=meals; saveMealPlan(plan); renderCalendar();
+                }
+            };
+            pop.appendChild(input); pop.appendChild(addBtn);
+            cell.appendChild(pop); currentPopover=pop;
         }
-        fillCategories();
-        function refresh(){
-            const query = searchInput.value.trim();
-            const ingredients = ingredientInput.value.trim();
-            const cat = categorySelect.value;
-            const favOnly = favCheckbox.checked;
-            listRecipes(query, ingredients, cat, favOnly);
-        }
-        searchInput.addEventListener('input', refresh);
-        ingredientInput.addEventListener('input', refresh);
-        categorySelect.addEventListener('change', refresh);
-        favCheckbox.addEventListener('change', refresh);
-        listRecipes();
+        function closePopover(){ if(currentPopover){currentPopover.remove(); currentPopover=null;} }
+        document.addEventListener('click',closePopover);
+
+        document.getElementById('prev-month').onclick=()=>{current.setMonth(current.getMonth()-1);renderCalendar();};
+        document.getElementById('next-month').onclick=()=>{current.setMonth(current.getMonth()+1);renderCalendar();};
+        document.getElementById('today-btn').onclick=()=>{current=new Date();current.setDate(1);renderCalendar();};
+
+        renderWeekdays();
+        renderCalendar();
+        document.querySelectorAll('#navbar nav a').forEach(a=>{if(a.getAttribute('href')===location.pathname.split('/').pop())a.classList.add('active');});
     </script>
 </body>
 </html>
